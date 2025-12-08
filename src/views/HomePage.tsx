@@ -1,8 +1,8 @@
 import { useEffect, useState, type MouseEvent } from 'react';
-import TipForm from '../components/TipForm';
 import UploadForm from '../components/UploadForm';
 import WalletConnectModal from '../components/WalletConnectModal';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import AdvertiseCallout from '../components/AdvertiseCallout';
+import RippleEffect from '../components/RippleEffect';
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
 function HomePage() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -20,10 +21,16 @@ function HomePage() {
   const [showArtistCursor, setShowArtistCursor] = useState(false);
   const [circlePos, setCirclePos] = useState({ x: 0, y: 0 });
   const [showSuccess, setShowSuccess] = useState(false);
-  const [lastArtist, setLastArtist] = useState<string | null>(null);
-  const [successType, setSuccessType] = useState<'tip' | 'upload'>('tip');
   const [uploadTxId, setUploadTxId] = useState<string | null>(null);
   const [uploadUrl, setUploadUrl] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [droppedFile, setDroppedFile] = useState<File | null>(null);
+  const [ripplePosition, setRipplePosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const [showRipple, setShowRipple] = useState(false);
+  const { toast } = useToast();
 
   const handleConnectWallet = () => {
     setShowWalletModal(true);
@@ -87,17 +94,9 @@ function HomePage() {
     setShowArtistCursor(true);
   };
 
-  const handleTipSuccess = (artistName: string) => {
-    setLastArtist(artistName);
-    setSuccessType('tip');
-    setShowSuccess(true);
-    setShowArtistCursor(false);
-  };
-
   const handleUploadSuccess = (txId: string, url: string) => {
     setUploadTxId(txId);
     setUploadUrl(url);
-    setSuccessType('upload');
     setShowSuccess(true);
     setShowArtistCursor(false);
   };
@@ -113,11 +112,59 @@ function HomePage() {
     return () => window.cancelAnimationFrame(id);
   }, [cursorPos, showArtistCursor]);
 
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      // Get drop position for ripple effect
+      const dropX = e.clientX;
+      const dropY = e.clientY;
+      setRipplePosition({ x: dropX, y: dropY });
+      setShowRipple(true);
+
+      // Show toast notification
+      toast({
+        title: 'File ready to be uploaded',
+        description: files[0].name,
+      });
+
+      setDroppedFile(files[0]);
+    }
+  };
+
   return (
     <div
       className="relative min-h-screen w-full overflow-hidden"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleBackgroundLeave}
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
     >
       <div className="fixed inset-0 z-0 overflow-hidden">
         <video
@@ -143,55 +190,31 @@ function HomePage() {
             onMouseLeave={handlePanelLeave}
           >
             <div>
-              <h1 className="text-5xl md:text-6xl font-dm-sans font-semibold text-white mb-3">
-                Just A Tip.
+              <h1 className="text-3xl md:text-4xl font-dm-sans font-semibold text-white mb-3">
+                Just Upload to Arweave.
               </h1>
               <p className="text-base md:text-lg text-white/80 font-dm-sans">
-                The simplest way to tip on Arweave.
+                It will never be forgotten.
               </p>
             </div>
 
-            <Tabs defaultValue="tip" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-lg p-1 mb-6">
-                <TabsTrigger
-                  value="tip"
-                  className="data-[state=active]:bg-white data-[state=active]:text-black text-gray-600 font-dm-sans text-sm"
-                >
-                  Tip
-                </TabsTrigger>
-                <TabsTrigger
-                  value="upload"
-                  className="data-[state=active]:bg-white data-[state=active]:text-black text-gray-600 font-dm-sans text-sm"
-                >
-                  Upload
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="tip" className="mt-0">
-                <TipForm
-                  isWalletConnected={isWalletConnected}
-                  onConnectWallet={handleConnectClick}
-                  onTipSent={handleTipSuccess}
-                />
-              </TabsContent>
-              <TabsContent value="upload" className="mt-0">
-                <UploadForm
-                  isWalletConnected={isWalletConnected}
-                  onConnectWallet={handleConnectClick}
-                  onUploadSuccess={handleUploadSuccess}
-                  wallet={wallet?.data || wallet}
-                />
-              </TabsContent>
-            </Tabs>
+            <UploadForm
+              isWalletConnected={isWalletConnected}
+              onConnectWallet={handleConnectClick}
+              onUploadSuccess={handleUploadSuccess}
+              wallet={wallet?.data || wallet}
+              droppedFile={droppedFile}
+            />
           </div>
 
           <div className="hidden md:flex flex-col items-end justify-center flex-1">
             <div className="max-w-xs text-right text-white/80 font-roboto-mono space-y-2">
               <p className="text-xs tracking-[0.18em] uppercase text-white/60">
-                Peter Caires
+                Permanent Web
               </p>
-              <p className="text-sm text-white/70">Royal Society × BBC</p>
+              <p className="text-sm text-white/70">Arweave Native Storage</p>
               <p className="text-base md:text-lg text-white">
-                “The man who tried to eat everything”
+                “Data should live forever.”
               </p>
             </div>
           </div>
@@ -201,17 +224,17 @@ function HomePage() {
       {showArtistCursor && (
         <div className="pointer-events-none fixed inset-0 z-20">
           <div
-            className="absolute flex items-center font-roboto-monojustify-center rounded-full text-[12px] md:text-sm tracking-[0.18em] uppercase text-black bg-white/90"
+            className="absolute flex items-center justify-center rounded-full text-base md:text-sm text-black bg-white/80"
             style={{
               left: circlePos.x,
               top: circlePos.y,
-              width: 160,
-              height: 160,
+              width: 120,
+              height: 120,
               marginLeft: -80,
               marginTop: -80,
             }}
           >
-            <span className="text-center">Check out Artist</span>
+            <span className="text-center">View Artist</span>
           </div>
         </div>
       )}
@@ -225,18 +248,14 @@ function HomePage() {
         <DialogContent className="max-w-sm bg-white text-center">
           <DialogHeader className="text-center">
             <DialogTitle className="text-2xl font-dm-sans font-semibold text-gray-900">
-              {successType === 'tip' ? 'Tip sent' : 'Upload successful'}
+              Upload successful
             </DialogTitle>
             <DialogDescription className="mt-2 text-sm text-gray-600 font-roboto-mono">
-              {successType === 'tip'
-                ? lastArtist
-                  ? `Your tip to ${lastArtist} was submitted.`
-                  : 'Your tip was submitted.'
-                : uploadUrl
-                ? `Your file has been uploaded to Arweave successfully.`
+              {uploadUrl
+                ? 'Your file is live on Arweave.'
                 : 'Your file has been uploaded to Arweave successfully.'}
             </DialogDescription>
-            {successType === 'upload' && uploadUrl && (
+            {uploadUrl && (
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                 <p className="text-xs text-gray-500 font-dm-sans mb-1">
                   Transaction ID:
@@ -269,6 +288,35 @@ function HomePage() {
         onOpenChange={setShowWalletModal}
         onWalletSelect={handleWalletSelect}
       />
+
+      <AdvertiseCallout />
+
+      {isDragging && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="rounded-2xl bg-white px-12 py-8 shadow-2xl">
+            <div className="flex flex-col items-center gap-4">
+              <i
+                className="bx bx-cloud-upload text-6xl text-gray-400"
+                aria-hidden="true"
+              />
+              <p className="text-2xl font-dm-sans font-semibold text-gray-900">
+                Drop to upload
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showRipple && ripplePosition && (
+        <RippleEffect
+          x={ripplePosition.x}
+          y={ripplePosition.y}
+          onComplete={() => {
+            setShowRipple(false);
+            setRipplePosition(null);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Arweave from 'arweave';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 interface UploadFormProps {
   isWalletConnected: boolean;
   onConnectWallet: () => void;
   onUploadSuccess?: (txId: string, url: string) => void;
   wallet?: any;
+  droppedFile?: File | null;
 }
 
 function getContentType(fileName: string): string {
@@ -38,10 +38,17 @@ function UploadForm({
   onConnectWallet,
   onUploadSuccess,
   wallet,
+  droppedFile,
 }: UploadFormProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  useEffect(() => {
+    if (droppedFile) {
+      setSelectedFile(droppedFile);
+    }
+  }, [droppedFile]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -169,7 +176,34 @@ function UploadForm({
             Select File
           </label>
           <div className="relative">
-            <Input id="file" type="file" onChange={handleFileChange} required />
+            <label
+              htmlFor="file"
+              className="flex items-center gap-3 rounded-[12px] border border-gray-200 bg-white px-4 py-3 text-sm text-gray-600 shadow-sm transition hover:border-gray-400 focus-within:border-black"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500">
+                <i
+                  className="bx bx-folder text-xl"
+                  aria-hidden="true"
+                  role="img"
+                />
+              </span>
+
+              <div className="flex-1 text-left text-xs font-semibold text-gray-800">
+                {selectedFile ? selectedFile.name : 'No file chosen'}
+              </div>
+
+              <span className="ml-auto text-[11px] text-gray-500">
+                Choose File
+              </span>
+
+              <input
+                id="file"
+                type="file"
+                onChange={handleFileChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+            </label>
+
             {selectedFile && (
               <p className="mt-2 text-xs text-gray-600 font-dm-sans">
                 Selected: {selectedFile.name} (

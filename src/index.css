@@ -189,3 +189,49 @@
   animation-timing-function: ease-out;
   animation-fill-mode: forwards;
 }
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+  pointer-events: none;
+  animation: ripple 1.2s ease-out forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes ripple-wave {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+
+  100% {
+    transform: scale(6);
+    opacity: 0;
+  }
+}
+
+.ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  animation: ripple-wave 1.5s ease-out forwards;
+  will-change: transform, opacity;
+}

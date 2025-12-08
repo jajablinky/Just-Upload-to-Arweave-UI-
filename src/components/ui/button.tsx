@@ -8,7 +8,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-black text-white hover:bg-black/90',
+        secondary: 'bg-black text-white hover:bg-black/90',
+        accent: 'bg-amber-200 text-black hover:bg-amber-300',
         outline: 'border border-gray-300 bg-white text-black hover:bg-gray-50',
         ghost: 'text-black hover:bg-gray-100',
       },
@@ -19,7 +20,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: 'secondary',
       size: 'default',
     },
   }

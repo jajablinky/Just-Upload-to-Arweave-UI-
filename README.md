@@ -1,8 +1,6 @@
-# Just A Tip
+# Just Upload to Arweave
 
-A tip protocol on Arweave.
-
-
+Simple browser UI for pinning files permanently on Arweave.
 
 ## Tech Stack
 
@@ -23,7 +21,7 @@ A tip protocol on Arweave.
 1. Clone the repository
 
 ```bash
-git clone <repo-url> && cd justatip
+git clone <repo-url> && cd just-upload-to-arweave
 ```
 
 2. Install dependencies
