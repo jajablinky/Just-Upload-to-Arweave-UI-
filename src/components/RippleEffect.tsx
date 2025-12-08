@@ -65,3 +65,4 @@ export default function RippleEffect({ x, y, onComplete }: RippleEffectProps) {
     </div>
   );
 }
+

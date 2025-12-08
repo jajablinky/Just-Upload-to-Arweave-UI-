@@ -189,15 +189,6 @@ function HomePage() {
             onMouseEnter={handlePanelEnter}
             onMouseLeave={handlePanelLeave}
           >
-            <div>
-              <h1 className="text-3xl md:text-4xl font-dm-sans font-semibold text-white mb-3">
-                Just Upload to Arweave.
-              </h1>
-              <p className="text-base md:text-lg text-white/80 font-dm-sans">
-                It will never be forgotten.
-              </p>
-            </div>
-
             <UploadForm
               isWalletConnected={isWalletConnected}
               onConnectWallet={handleConnectClick}
@@ -210,11 +201,11 @@ function HomePage() {
           <div className="hidden md:flex flex-col items-end justify-center flex-1">
             <div className="max-w-xs text-right text-white/80 font-roboto-mono space-y-2">
               <p className="text-xs tracking-[0.18em] uppercase text-white/60">
-                Permanent Web
+                Peter Caires
               </p>
-              <p className="text-sm text-white/70">Arweave Native Storage</p>
-              <p className="text-base md:text-lg text-white">
-                “Data should live forever.”
+              <p className="text-sm text-white/70">Royal Society x BBC</p>
+              <p className="text-white">
+                “The Man who tried to eat every animal.”
               </p>
             </div>
           </div>
@@ -224,7 +215,7 @@ function HomePage() {
       {showArtistCursor && (
         <div className="pointer-events-none fixed inset-0 z-20">
           <div
-            className="absolute flex items-center justify-center rounded-full text-base md:text-sm text-black bg-white/80"
+            className="absolute flex items-center justify-center rounded-full text-base md:text-sm text-black bg-white/70"
             style={{
               left: circlePos.x,
               top: circlePos.y,

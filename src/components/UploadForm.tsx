@@ -166,10 +166,6 @@ function UploadForm({
 
   return (
     <div className={cardClasses}>
-      <h2 className="text-2xl font-dm-sans font-semibold mb-6 text-black">
-        Upload to Arweave
-      </h2>
-
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label htmlFor="file" className={labelClasses}>
