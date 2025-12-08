@@ -28,3 +28,10 @@ llms*
 
 hyperbeam_docs.txt
 wallet.json
+
+# Large media files
+*.mp4
+*.mov
+*.avi
+*.webm
+public/background.mp4
