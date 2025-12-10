@@ -191,6 +191,15 @@ function HomePage() {
         className="relative z-10 min-h-screen flex flex-col p-6 md:p-12"
         onMouseEnter={handleBackgroundEnter}
         onMouseLeave={handleBackgroundLeave}
+        onClick={() => {
+          if (typeof window !== 'undefined') {
+            window.open(
+              'https://petercaires.com',
+              '_blank',
+              'noopener,noreferrer'
+            );
+          }
+        }}
       >
         <img
           src="/just-upload-to-arweave.png"
