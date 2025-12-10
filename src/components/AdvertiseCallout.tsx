@@ -1,6 +1,6 @@
 import { useState, type MouseEventHandler } from 'react';
 
-const contactLink = 'https://x.com/messages/compose?recipient=jajablinky';
+const contactLink = 'https://x.com/jajablinky';
 
 type AdvertiseCalloutProps = {
   onClick?: MouseEventHandler<HTMLButtonElement>;

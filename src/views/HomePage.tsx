@@ -30,6 +30,7 @@ function HomePage() {
     y: number;
   } | null>(null);
   const [showRipple, setShowRipple] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const { toast } = useToast();
 
   const handleConnectWallet = () => {
@@ -167,13 +168,21 @@ function HomePage() {
       onDrop={handleDrop}
     >
       <div className="fixed inset-0 z-0 overflow-hidden">
+        <img
+          src="/background-frame.png"
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <video
-          className="w-full h-full object-cover"
-          src="/background.mp4"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            videoReady ? 'opacity-100' : 'opacity-0'
+          }`}
+          src="https://arweave.net/69BbTwr1jAexNoNBLqGPJnqNLgb8JaU5GSb3fQvZQRA"
           autoPlay
           loop
           muted
           playsInline
+          onCanPlay={() => setVideoReady(true)}
         />
         <div className="absolute inset-0 bg-black/35" />
       </div>
@@ -183,6 +192,11 @@ function HomePage() {
         onMouseEnter={handleBackgroundEnter}
         onMouseLeave={handleBackgroundLeave}
       >
+        <img
+          src="/just-upload-to-arweave.png"
+          alt="Just upload to arweave"
+          className="fixed top-6 left-1/2 -translate-x-1/2 h-20 md:h-24 opacity-60 invert pointer-events-none z-20 brightness-10"
+        />
         <div className="flex-1 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div
             className="w-full max-w-[480px] flex flex-col gap-8"
