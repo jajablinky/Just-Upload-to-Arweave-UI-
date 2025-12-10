@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import backgroundFrame from '../resources/background-frame.png';
+import logoImage from '../resources/just-upload-to-arweave.png';
 
 function HomePage() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -95,6 +97,22 @@ function HomePage() {
     setShowArtistCursor(true);
   };
 
+  const handleBackgroundClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (!showArtistCursor) return;
+
+    const centerX = circlePos.x - 20;
+    const centerY = circlePos.y - 20;
+    const radius = 60;
+
+    const dx = event.clientX - centerX;
+    const dy = event.clientY - centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance <= radius) {
+      window.open('https://petercaires.com', '_blank', 'noopener,noreferrer');
+    }
+  };
+
   const handleUploadSuccess = (txId: string, url: string) => {
     setUploadTxId(txId);
     setUploadUrl(url);
@@ -166,10 +184,11 @@ function HomePage() {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      onClick={handleBackgroundClick}
     >
       <div className="fixed inset-0 z-0 overflow-hidden">
         <img
-          src="/background-frame.png"
+          src={backgroundFrame}
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -191,18 +210,9 @@ function HomePage() {
         className="relative z-10 min-h-screen flex flex-col p-6 md:p-12"
         onMouseEnter={handleBackgroundEnter}
         onMouseLeave={handleBackgroundLeave}
-        onClick={() => {
-          if (typeof window !== 'undefined') {
-            window.open(
-              'https://petercaires.com',
-              '_blank',
-              'noopener,noreferrer'
-            );
-          }
-        }}
       >
         <img
-          src="/just-upload-to-arweave.png"
+          src={logoImage}
           alt="Just upload to arweave"
           className="fixed top-6 left-1/2 -translate-x-1/2 h-20 md:h-24 opacity-60 invert pointer-events-none z-20 brightness-10"
         />
