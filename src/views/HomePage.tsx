@@ -12,8 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import backgroundFrame from '../resources/background-frame.png';
-import logoImage from '../resources/just-upload-to-arweave.png';
+import backgroundFrame from '@/resources/background-frame.png';
 
 function HomePage() {
   const [isWalletConnected, setIsWalletConnected] = useState(false);
@@ -212,7 +211,7 @@ function HomePage() {
         onMouseLeave={handleBackgroundLeave}
       >
         <img
-          src={logoImage}
+          src="https://arweave.net/KagS0PNcrOzMR6jEBx4E1fDq-JPIThkjVSd_tXRGJ1g"
           alt="Just upload to arweave"
           className="fixed top-6 left-1/2 -translate-x-1/2 h-20 md:h-24 opacity-60 invert pointer-events-none z-20 brightness-10"
         />
